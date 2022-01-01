@@ -90,7 +90,7 @@
 						columnsOmmitedFromOutput.push(colName);
 					}
 				});
-				rows.push(colHeaders.join(','));
+				rows.push(colHeaders.join(';'));
 
 				data.forEach((record) => {
 					var rowData = [];
@@ -99,7 +99,7 @@
 							rowData.push(record[colName]);
 						}
 					});
-					rows.push(rowData.join(','));
+					rows.push(rowData.join(';'));
 				});
 
 				return [rows.join('\n'), columnsOmmitedFromOutput];

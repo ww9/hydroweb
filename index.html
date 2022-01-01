@@ -203,7 +203,9 @@
 					App.addResult('<b>Input has ' + columnsOmmitedFromOutput.length + ' columns that were not included in output</b>: ' + columnsOmmitedFromOutput.join(', '));
 					App.addResult('<b>Download processed CSV:</b>');
 					let $p = App.addResult('<a href="link" style="font-size: 30px">click here to download</a>');
-					App.setLinkDownload($p.find('a'), 'xd.csv', dataCSV);
+					var today = new Date();
+					var date = today.getFullYear() + '_' + (today.getMonth() + 1) + '_' + today.getDate();
+					App.setLinkDownload($p.find('a'), 'processed_csv_' + date + '.csv', dataCSV);
 				} catch (e) {
 					App.addResult('<h3 style="color: red">Ops. There was an error</h3>');
 					App.addResult('').text(e.toString());

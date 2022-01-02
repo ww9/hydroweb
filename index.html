@@ -44,6 +44,21 @@
 		.result p {
 			margin: 0;
 		}
+		table,
+		th,
+		td {
+			border: 1px solid black;
+		}
+		table {
+			border-collapse: collapse;
+		}
+		.preview th,
+		td {
+			font-size: 11px;
+		}
+		tr:nth-child(even) {
+			background-color: #bbbbbb;
+		}
 	</style>
 	<script src="outputColumnsOrder.js"></script>
 	<script src="jquery-3.6.0.min.js"></script>
@@ -103,6 +118,22 @@
 				});
 
 				return [rows.join('\n'), columnsOmmitedFromOutput];
+			},
+			convertToHTML: function (data) {
+				var html = '<table><thead>';
+				Object.keys(data[0]).forEach((colName) => {
+					html += '<th>' + colName + '</th>';
+				});
+				html += '</thead><tbody>';
+				data.forEach((record, index) => {
+					html += '</tr>';
+					Object.keys(record).forEach((colName) => {
+						html += '<td>' + record[colName] + '</td>';
+					});
+					html += '</tr>';
+				});
+				html += '</tbody></table>';
+				return html;
 			},
 			getYearMonthFromIso: function (isoDate) {
 				return isoDate.split('-').slice(0, 2).join('-');
@@ -191,6 +222,17 @@
 						prevEntryDate = entry.Data;
 					});
 
+					/* 
+					2 = dado censurado
+
+					onde era 0, converter para branco
+					onde era 1 vira 0 na coluna Ind
+					onde era 2 vira 1 na coluna Ind
+
+					quando vira 0, ele repete em ambas as colunas
+					quando vira 1, ele coloca 0 na primeira, depois repete na outra
+					*/
+
 					App.addResult('Removing columns D, E, F and G...');
 					App.addResult('Reordering columns for output...');
 					// Remove cols D, E, F and G when reorganizign cols. When only pick what we want in the output
@@ -206,6 +248,7 @@
 					var today = new Date();
 					var date = today.getFullYear() + '_' + (today.getMonth() + 1) + '_' + today.getDate();
 					App.setLinkDownload($p.find('a'), 'processed_csv_' + date + '.csv', dataCSV);
+					$('.preview').html(App.convertToHTML(newData));
 				} catch (e) {
 					App.addResult('<h3 style="color: red">Ops. There was an error</h3>');
 					App.addResult('').text(e.toString());
@@ -232,5 +275,7 @@
 		<div class="result" style="border: 1px solid #555; padding: 5px">
 			<h2>Upload a CSV ZIP file from <a href="https://www.snirh.gov.br/hidroweb/serieshistoricas">https://www.snirh.gov.br/hidroweb/serieshistoricas</a> to see results here.</h2>
 		</div>
+		<h3>5) Preview output</h3>
+		<div class="preview"></div>
 	</body>
 </html>

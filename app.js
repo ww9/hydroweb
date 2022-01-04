@@ -139,11 +139,9 @@ var App = {
 				if (entryMonths == prevEntryMonths) {
 					entry.Duplicated = 1;
 					duplicateEntries.push(App.getYearMonthFromIso(entry.Data));
-				} else {
-					i++;
 				}
-				entry.id = i;
 			}
+			entry.id = ++i;
 			prevEntryDate = entry.Data;
 		});
 		return duplicateEntries;

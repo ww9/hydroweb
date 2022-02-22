@@ -189,12 +189,12 @@ var App = {
 					throw new Error('status col of entry ' + index + ' was of the expected values (' + expectedStatus.join(',') + '): ' + status);
 				}
 				if (status == '') entry[newStatusCol] = '';
-				if (status == '0') entry[newStatusCol] = ''; // onde era 0, converter para branco
+				if (status == '0') entry[newStatusCol] = '0'; // onde era 0, converter para branco
 				if (status == '1') entry[newStatusCol] = '0'; // onde era 1 vira 0 na coluna Ind
 				if (status == '2') entry[newStatusCol] = '1'; // onde era 2 vira 1 na coluna Ind. 2 = dado censurado
-				if (status == '3') entry[newStatusCol] = '2'; // ????????????
-				if (status == '4') entry[newStatusCol] = '3'; // ????????????
-				if (status == '5') entry[newStatusCol] = '4'; // ????????????
+				if (status == '3') entry[newStatusCol] = '1'; // ????????????
+				if (status == '4') entry[newStatusCol] = '1'; // ????????????
+				if (status == '5') entry[newStatusCol] = '1'; // ????????????
 
 				let newStatus = entry[newStatusCol];
 				if (newStatus == '' || newStatus == '0') { // quando vira 0, ele repete em ambas as colunas

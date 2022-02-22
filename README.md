@@ -2,6 +2,8 @@
 
 This is an online tool that reads, cleans and reorganizes hydrometeorological data from https://www.snirh.gov.br/hidroweb
 
+It prototype was done in a few hours including information gathering. So please don't judge the lack of tests and proper structure.
+
 ## How it works
 
 -  Open https://ww9.github.io/hydroweb
@@ -18,11 +20,11 @@ This is an online tool that reads, cleans and reorganizes hydrometeorological da
 
 ## Architecture
 
-The technology used in thir project is intentionally kept as simple as possible in order to foster contributions.
-
-Everything happens in the browser, there is no backend required. That means it can run without a webserver and even offline on your computer.
+Everything happens in the browser, there is no backend required. That means it can run without a webserver.
 
 That is also the reason why it works as a GitHub page on https://ww9.github.io/hydroweb.
+
+Please be mindful that this is just a simple proof-of-concept. Usually I would add TypeScript, unit tests and a frontend framework such as Angular, React, Svelte or Vue.
 
 ## Support
 

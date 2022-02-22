@@ -28,8 +28,23 @@ var App = {
 		}
 		return years + '-' + months.toString().padStart(2, '0') + '-' + days;
 	},
+	renameColumnsForOutput: function (colNames) {
+		return colNames.map((val, index) => {
+			if (val == 'ParametroProfundidadeQualAgua001Status') return 'ProfundidadeQualAgua001Status';
+			if (val == 'newParametroProfundidadeQualAgua001Status') return 'Profundidade_Ind';
+			if (val == 'newQualAgua002Status') return 'TempAr_Ind';
+			if (val == 'newQualAgua003Status') return 'TempAr_Ind';
+			if (val == 'newQualAgua004Status') return 'pH_Ind';
+			return val;
+		});
+	},
 	convertToCsv: function (data, outputColOrder) {
-		var rows = [outputColOrder.join(';')];
+		// Rename some columns
+		// ParametroProfundidadeQualAgua001Status -- > ProfundidadeQualAgua001Status
+		// newParametroProfundidadeQualAgua001Status -- > Profundidade_Ind
+		// ProfundidadeStart
+		// ProfundidadeEnd
+		var rows = [App.renameColumnsForOutput(outputColOrder).join(';')];
 		data.forEach((record) => {
 			var rowData = [];
 			outputColOrder.forEach((colName) => {
@@ -43,7 +58,7 @@ var App = {
 		maxCols = maxCols || Number.MAX_SAFE_INTEGER;
 		maxRows = maxRows || Number.MAX_SAFE_INTEGER;
 		var html = '<table class="table table-striped table-bordered"><thead>';
-		cols.forEach((colName, i) => {
+		App.renameColumnsForOutput(cols).forEach((colName, i) => {
 			if (i >= maxCols) return;
 			html += '<th>' + colName + '</th>';
 		});
@@ -116,7 +131,7 @@ var App = {
 				incrementedIsoDate = App.getYearMonthFromIso(App.getIncrementedMonthIsoDate(incrementedIsoDate)) + '-01';
 				var newEntry = $.extend({}, emptyEntry, {
 					Data: incrementedIsoDate,
-					GapFilled: 1,
+					GapFilled: 'MV',
 					Duplicated: '',
 					EstacaoCodigo: entry.EstacaoCodigo
 				});
@@ -190,6 +205,17 @@ var App = {
 					entry[startCol] = 0;
 					entry[endCol] = entry[entryCol] || '';
 				}
+				let entryVal = entry[entryCol];
+				if (entryCol == 'ColiformesTotais' || entryCol == 'ColiformesFecais' || entryCol == 'ColiformesTermotolerantes' || entryCol == 'Escherichia') {
+					// QualAgua053Status = SE(ColiformesTotais>=24192;1;SE(ColiformesTotais="";"";0))
+					entry[statusCol] = entryVal >= 24192 ? '1' : (entryVal == '' ? '' : '0');
+					// =SE(ColiformesTotais_Ind=0;ColiformesTotais;SE(ColiformesTotais_Ind=1;"24192";""))
+					entry[newStatusCol] = entry[newStatusCol] == '0' ? entryVal : (entry[newStatusCol] == '1' ? '24192' : '');
+					// =SE(ColiformesTotais_Ind=0;ColiformesTotais;SE(ColiformesTotais_Ind=1;"24192";""))
+					entry[newStatusCol] = entry[newStatusCol] == '0' ? entryVal : (entry[newStatusCol] == '1' ? '24192' : '');
+					// =SE(ColiformesTotais_Ind=1;"*";SE(ColiformesTotais_Ind=0;ColiformesTotais;""))
+					entry[newStatusCol] = entry[newStatusCol] == '1' ? '*' : (entry[newStatusCol] == '0' ? entryVal : '');
+				}
 			}
 		});
 	},
@@ -232,7 +258,8 @@ var App = {
 			let $p = App.addResult('<a href="link" style="font-size: 30px">click here to download</a>');
 			var today = new Date();
 			var date = today.getFullYear() + '_' + (today.getMonth() + 1) + '_' + today.getDate();
-			App.setLinkDownload($p.find('a'), 'processed_csv_' + date + '.csv', dataCSV);
+			const estacaoCodigo = newData[0].EstacaoCodigo;
+			App.setLinkDownload($p.find('a'), estacaoCodigo + '_processed_csv_' + date + '.csv', dataCSV);
 			App.lastProcessedData = newData;
 			$('.btn_preview, .btn_preview_quick').removeClass('disabled');
 		} catch (e) {

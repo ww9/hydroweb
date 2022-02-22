@@ -68,7 +68,16 @@ var App = {
 			html += '</tr>';
 			cols.forEach((colName, z) => {
 				if (z >= maxCols) return;
-				html += '<td>' + record[colName] + '</td>';
+				if (colName == 'Data') {
+					var data = record[colName];
+					if (data) {
+						data = data.split('-');
+						data = data[2] + '/' + data[1] + '/' + data[0];
+					}
+					html += '<td>' + data + '</td>';
+				} else {
+					html += '<td>' + record[colName] + '</td>';
+				}
 			});
 			html += '</tr>';
 		});
